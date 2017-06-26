@@ -229,7 +229,7 @@ class OsuBuffer {
      * @returns {string}
      */
     ReadOsuString() {
-        let isString = this.ReadByte === 11;
+        let isString = this.ReadByte() === 11;
         if(isString) {
             let len = this.ReadULeb128();
             return this.ReadString(len);
