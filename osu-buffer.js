@@ -401,6 +401,17 @@ class OsuBuffer {
     }
 
     /**
+     * Writes a boolean to the buffer
+     * @param {boolean} value
+     * @return {OsuBuffer}
+     */
+    WriteBoolean(value) {
+        this.WriteByte(value ? 0 : 1);
+
+        return this;
+    }
+
+    /**
      * Writes an osu! encoded string to the Buffer
      * @param {string?} value
      * @param nullable
