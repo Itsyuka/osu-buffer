@@ -55,12 +55,14 @@ class OsuBuffer {
 
     /**
      * Slices and returns buffer
-     * @param length
-     * @return {Buffer}
+     * @param {Number} length
+     * @param {Boolean?} asOsuBuffer
+     * @return {OsuBuffer|Buffer}
      */
-    Slice(length) {
+    Slice(length, asOsuBuffer = true) {
         this.position += length;
-        return this.buffer.slice(this.position - length, this.position)
+        return asOsuBuffer ? OsuBuffer.from(this.buffer.slice(this.position - length, this.position))
+            : this.buffer.slice(this.position - length, this.position);
     }
 
     // Reading

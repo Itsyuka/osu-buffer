@@ -1,6 +1,6 @@
 {
   "name": "osu-buffer",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Allows you to read and write packets/files for the game osu!",
   "main": "osu-buffer.js",
   "scripts": {
