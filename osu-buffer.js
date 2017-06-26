@@ -192,7 +192,7 @@ class OsuBuffer {
      * @returns {String}
      */
     ReadString(length) {
-        return this.Slice(length).toString();
+        return this.Slice(length, false).toString();
     }
 
     /**
