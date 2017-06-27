@@ -38,7 +38,7 @@ class OsuBuffer {
 
     /**
      * Returns boolean if can read from defined length from buffer
-     * @param length
+     * @param {number} length
      * @return {boolean}
      */
     canRead(length) {
@@ -188,7 +188,7 @@ class OsuBuffer {
 
     /**
      * Reads a string from the buffer
-     * @param length
+     * @param {number} length
      * @returns {String}
      */
     ReadString(length) {
@@ -242,7 +242,7 @@ class OsuBuffer {
 
     /**
      *
-     * @param value
+     * @param {Buffer} value
      * @return {OsuBuffer}
      */
     WriteBuffer(value) {
@@ -252,8 +252,8 @@ class OsuBuffer {
 
     /**
      *
-     * @param value
-     * @param byteLength
+     * @param {number} value
+     * @param {number} byteLength
      * @return {OsuBuffer}
      */
     WriteUInt(value, byteLength) {
@@ -265,8 +265,8 @@ class OsuBuffer {
 
     /**
      *
-     * @param value
-     * @param byteLength
+     * @param {number} value
+     * @param {number} byteLength
      * @return {OsuBuffer}
      */
     WriteInt(value, byteLength) {
@@ -287,7 +287,7 @@ class OsuBuffer {
 
     /**
      *
-     * @param value
+     * @param {Array} value
      * @return {OsuBuffer}
      */
     WriteBytes(value) {
@@ -368,7 +368,7 @@ class OsuBuffer {
 
     /**
      * Writes a 32-bit float to the buffer
-     * @param value
+     * @param {number} value
      * @return {OsuBuffer}
      */
     WriteFloat(value) {
@@ -380,7 +380,7 @@ class OsuBuffer {
 
     /**
      * Writes a 64-bit double to the buffer
-     * @param value
+     * @param {number} value
      * @return {OsuBuffer}
      */
     WriteDouble(value) {
@@ -408,9 +408,7 @@ class OsuBuffer {
      * @return {OsuBuffer}
      */
     WriteBoolean(value) {
-        this.WriteByte(value ? 0 : 1);
-
-        return this;
+        return this.WriteByte(value ? 1 : 0);
     }
 
     /**
