@@ -11,7 +11,7 @@ class OsuBuffer {
 
     /**
      * Returns the full length of the buffer
-     * @returns {number}
+     * @returns {Number}
      */
     get length() {
         return this.buffer.length;
@@ -38,7 +38,7 @@ class OsuBuffer {
 
     /**
      * Returns boolean if can read from defined length from buffer
-     * @param {number} length
+     * @param {Number} length
      * @return {boolean}
      */
     canRead(length) {
@@ -69,7 +69,7 @@ class OsuBuffer {
 
     /**
      * Peeks the next byte in the buffer without shifting the position
-     * @return {number|undefined}
+     * @return {Number|undefined}
      */
     Peek() {
         return this.buffer[this.position+1];
@@ -78,7 +78,7 @@ class OsuBuffer {
     /**
      * Reads a byte from the buffer
      * Does the same thing as ReadUInt8()
-     * @return {number}
+     * @return {Number}
      */
     ReadByte() {
         return this.ReadUInt8();
@@ -86,8 +86,8 @@ class OsuBuffer {
 
     /**
      * Reads a signed integer from the Buffer
-     * @param byteLength
-     * @return {number}
+     * @param {Number} byteLength
+     * @return {Number}
      */
     ReadInt(byteLength) {
         this.position += byteLength;
@@ -96,8 +96,8 @@ class OsuBuffer {
 
     /**
      * Reads a unsigned integer from the Buffer
-     * @param byteLength
-     * @return {number}
+     * @param {Number} byteLength
+     * @return {Number}
      */
     ReadUInt(byteLength) {
         this.position += byteLength;
@@ -106,7 +106,7 @@ class OsuBuffer {
 
     /**
      * Reads a 8-bit signed integer from the buffer
-     * @return {number}
+     * @return {Number}
      */
     ReadInt8() {
         return this.ReadInt(1);
@@ -114,7 +114,7 @@ class OsuBuffer {
 
     /**
      * Reads a 8-bit unsigned integer from the buffer
-     * @return {number}
+     * @return {Number}
      */
     ReadUInt8() {
         return this.ReadUInt(1);
@@ -122,7 +122,7 @@ class OsuBuffer {
 
     /**
      * Reads a 16-bit signed integer from the buffer
-     * @return {number}
+     * @return {Number}
      */
     ReadInt16() {
         return this.ReadInt(2);
@@ -130,7 +130,7 @@ class OsuBuffer {
 
     /**
      * Reads a 16-bit unsigned integer from the buffer
-     * @return {number}
+     * @return {Number}
      */
     ReadUInt16() {
         return this.ReadUInt(2);
@@ -138,7 +138,7 @@ class OsuBuffer {
 
     /**
      * Reads a 32-bit signed integer from the buffer
-     * @return {number}
+     * @return {Number}
      */
     ReadInt32() {
         return this.ReadInt(4);
@@ -146,7 +146,7 @@ class OsuBuffer {
 
     /**
      * Reads a 32-bit signed unsigned from the buffer
-     * @return {number}
+     * @return {Number}
      */
     ReadUInt32() {
         return this.ReadUInt(4);
@@ -154,7 +154,7 @@ class OsuBuffer {
 
     /**
      * Reads a 64-bit signed integer from the buffer
-     * @return {number}
+     * @return {Number}
      */
     ReadInt64() {
         return this.ReadInt(8);
@@ -162,7 +162,7 @@ class OsuBuffer {
 
     /**
      * Reads a 64-bit signed unsigned from the buffer
-     * @return {number}
+     * @return {Number}
      */
     ReadUInt64() {
         return this.ReadUInt(8);
@@ -170,7 +170,7 @@ class OsuBuffer {
 
     /**
      * Reads a 32-bit Float from the buffer
-     * @returns {number}
+     * @returns {Number}
      */
     ReadFloat() {
         this.position += 4;
@@ -179,7 +179,7 @@ class OsuBuffer {
 
     /**
      * Reads a 64-bit Double from the buffer
-     * @returns {number}
+     * @returns {Number}
      */
     ReadDouble() {
         this.position += 8;
@@ -188,7 +188,7 @@ class OsuBuffer {
 
     /**
      * Reads a string from the buffer
-     * @param {number} length
+     * @param {Number} length
      * @returns {String}
      */
     ReadString(length) {
@@ -197,23 +197,31 @@ class OsuBuffer {
 
     /**
      * Decodes a 7-bit encoded integer from the buffer
-     * @returns {number}
+     * @returns {Number}
      */
-    ReadULeb128() {
+    ReadVarint() {
         let total = 0;
         let shift = 0;
-        let len = 0;
+        let byte;
 
-        while (true) {
-            let byte = this.buffer.readUInt8(this.position+len++);
+        do {
+            byte = this.ReadUInt8();
             total |= ((byte & 0x7F) << shift);
             if((byte & 0x80) === 0) break;
             shift += 7;
-        }
-
-        this.position += len;
+        } while (true);
 
         return total;
+    }
+
+    /**
+     * Decodes a 7-bit encoded integer from the buffer
+     * @deprecated Use ReadVarint instead
+     * @returns {Number}
+     */
+    ReadULeb128() {
+        console.warn('ReadULeb128 has been deprecated, use ReadVarint instead');
+        return this.ReadVarint();
     }
 
     /**
@@ -241,7 +249,7 @@ class OsuBuffer {
     // Writing
 
     /**
-     *
+     * Concats a buffer to the current buffer
      * @param {Buffer} value
      * @return {OsuBuffer}
      */
@@ -251,9 +259,9 @@ class OsuBuffer {
     }
 
     /**
-     *
-     * @param {number} value
-     * @param {number} byteLength
+     * Writes an unsinged integer of any byte length
+     * @param {Number} value
+     * @param {Number} byteLength
      * @return {OsuBuffer}
      */
     WriteUInt(value, byteLength) {
@@ -264,9 +272,9 @@ class OsuBuffer {
     }
 
     /**
-     *
-     * @param {number} value
-     * @param {number} byteLength
+     * Writes an integer of any byte length
+     * @param {Number} value
+     * @param {Number} byteLength
      * @return {OsuBuffer}
      */
     WriteInt(value, byteLength) {
@@ -278,7 +286,7 @@ class OsuBuffer {
 
     /**
      * Writes a 8-bit integer to the Buffer
-     * @param {number} value
+     * @param {Number} value
      * @return {OsuBuffer}
      */
     WriteByte(value) {
@@ -296,7 +304,7 @@ class OsuBuffer {
 
     /**
      * Writes a 8-bit integer to the Buffer
-     * @param {number} value
+     * @param {Number} value
      * @return {OsuBuffer}
      */
     WriteUInt8(value) {
@@ -305,7 +313,7 @@ class OsuBuffer {
 
     /**
      * Writes a 8-bit integer to the Buffer
-     * @param {number} value
+     * @param {Number} value
      * @return {OsuBuffer}
      */
     WriteInt8(value) {
@@ -314,7 +322,7 @@ class OsuBuffer {
 
     /**
      * Writes a 16-bit unsigned integer to the Buffer
-     * @param {number} value
+     * @param {Number} value
      * @return {OsuBuffer}
      */
     WriteUInt16(value) {
@@ -323,7 +331,7 @@ class OsuBuffer {
 
     /**
      * Writes a 16-bit signed integer to the Buffer
-     * @param {number} value
+     * @param {Number} value
      * @return {OsuBuffer}
      */
     WriteInt16(value) {
@@ -332,7 +340,7 @@ class OsuBuffer {
 
     /**
      * Writes a 32-bit unsigned integer to the Buffer
-     * @param {number} value
+     * @param {Number} value
      * @return {OsuBuffer}
      */
     WriteUInt32(value) {
@@ -341,7 +349,7 @@ class OsuBuffer {
 
     /**
      * Writes a 32-bit signed integer to the Buffer
-     * @param {number} value
+     * @param {Number} value
      * @return {OsuBuffer}
      */
     WriteInt32(value) {
@@ -350,7 +358,7 @@ class OsuBuffer {
 
     /**
      * Writes a 64-bit unsigned integer to the Buffer
-     * @param {number} value
+     * @param {Number} value
      * @return {OsuBuffer}
      */
     WriteUInt64(value) {
@@ -359,7 +367,7 @@ class OsuBuffer {
 
     /**
      * Writes a 64-bit signed integer to the Buffer
-     * @param {number} value
+     * @param {Number} value
      * @return {OsuBuffer}
      */
     WriteInt64(value) {
@@ -368,7 +376,7 @@ class OsuBuffer {
 
     /**
      * Writes a 32-bit float to the buffer
-     * @param {number} value
+     * @param {Number} value
      * @return {OsuBuffer}
      */
     WriteFloat(value) {
@@ -380,7 +388,7 @@ class OsuBuffer {
 
     /**
      * Writes a 64-bit double to the buffer
-     * @param {number} value
+     * @param {Number} value
      * @return {OsuBuffer}
      */
     WriteDouble(value) {
@@ -427,7 +435,7 @@ class OsuBuffer {
             this.WriteByte(0);
         } else {
             this.WriteByte(11);
-            this.WriteULeb128(value.length);
+            this.WriteVarint(value.length);
             this.WriteString(value);
         }
         return this;
@@ -435,23 +443,30 @@ class OsuBuffer {
 
     /**
      * Writes an unsigned 7-bit encoded integer to the Buffer
-     * @param {number} value
+     * @param {Number} value
+     * @return {OsuBuffer}
+     */
+    WriteVarint(value) {
+        let arr = [];
+        let len = 0;
+        do {
+            arr[len] = value & 0x7F;
+            if (value >>= 7) arr[len] |= 0x80;
+            len++;
+        } while (value > 0);
+
+        return this.WriteBuffer(Buffer.from(arr));
+    }
+
+    /**
+     * Writes an unsigned 7-bit encoded integer to the Buffer
+     * @deprecated Use WriteUVarint instead
+     * @param {Number} value
      * @return {OsuBuffer}
      */
     WriteULeb128(value) {
-        let arr = [];
-        let len = 0;
-        let buff = Buffer.alloc(1);
-        if(value > 0) {
-            while (value > 0) {
-                arr[len] = value & 0x7F;
-                if (value >>= 7) arr[len] |= 0x80;
-                len++;
-            }
-            buff = Buffer.from(arr);
-        }
-
-        return this.WriteBuffer(buff);
+        console.warn('WriteULeb128 has been deprecated, use WriteVarint instead');
+        return this.WriteVarint(value);
     }
 }
 
