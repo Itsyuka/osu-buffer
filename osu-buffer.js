@@ -202,14 +202,20 @@ class OsuBuffer {
     ReadVarint() {
         let total = 0;
         let shift = 0;
-        let byte;
-
-        do {
-            byte = this.ReadUInt8();
+        let byte = this.ReadUInt8();
+        if((byte & 0x80) === 0) {
             total |= ((byte & 0x7F) << shift);
-            if((byte & 0x80) === 0) break;
-            shift += 7;
-        } while (true);
+        } else {
+            let end = false;
+            do {
+                if(shift) {
+                    byte = this.ReadUInt8();
+                }
+                total |= ((byte & 0x7F) << shift);
+                if((byte & 0x80) === 0) end = true;
+                shift += 7;
+            } while (!end);
+        }
 
         return total;
     }
@@ -220,7 +226,6 @@ class OsuBuffer {
      * @returns {Number}
      */
     ReadULeb128() {
-        console.warn('ReadULeb128 has been deprecated, use ReadVarint instead');
         return this.ReadVarint();
     }
 
@@ -239,7 +244,7 @@ class OsuBuffer {
     ReadOsuString() {
         let isString = this.ReadByte() === 11;
         if(isString) {
-            let len = this.ReadULeb128();
+            let len = this.ReadVarint();
             return this.ReadString(len);
         } else {
             return '';
@@ -451,7 +456,7 @@ class OsuBuffer {
         let len = 0;
         do {
             arr[len] = value & 0x7F;
-            if (value >>= 7) arr[len] |= 0x80;
+            if ((value >>= 7) !== 0) arr[len] |= 0x80;
             len++;
         } while (value > 0);
 
@@ -465,7 +470,6 @@ class OsuBuffer {
      * @return {OsuBuffer}
      */
     WriteULeb128(value) {
-        console.warn('WriteULeb128 has been deprecated, use WriteVarint instead');
         return this.WriteVarint(value);
     }
 }
