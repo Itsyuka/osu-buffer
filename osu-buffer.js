@@ -1,4 +1,6 @@
 'use strict';
+var Int64LE = require("int64-buffer").Int64LE;
+var Uint64LE = require("int64-buffer").Uint64LE;
 
 class OsuBuffer {
     /**
@@ -61,8 +63,8 @@ class OsuBuffer {
      */
     Slice(length, asOsuBuffer = true) {
         this.position += length;
-        return asOsuBuffer ? OsuBuffer.from(this.buffer.slice(this.position - length, this.position))
-            : this.buffer.slice(this.position - length, this.position);
+        return asOsuBuffer ? OsuBuffer.from(this.buffer.slice(this.position - length, this.position)) :
+            this.buffer.slice(this.position - length, this.position);
     }
 
     // Reading
@@ -72,7 +74,7 @@ class OsuBuffer {
      * @return {Number|undefined}
      */
     Peek() {
-        return this.buffer[this.position+1];
+        return this.buffer[this.position + 1];
     }
 
     /**
@@ -203,16 +205,16 @@ class OsuBuffer {
         let total = 0;
         let shift = 0;
         let byte = this.ReadUInt8();
-        if((byte & 0x80) === 0) {
+        if ((byte & 0x80) === 0) {
             total |= ((byte & 0x7F) << shift);
         } else {
             let end = false;
             do {
-                if(shift) {
+                if (shift) {
                     byte = this.ReadUInt8();
                 }
                 total |= ((byte & 0x7F) << shift);
-                if((byte & 0x80) === 0) end = true;
+                if ((byte & 0x80) === 0) end = true;
                 shift += 7;
             } while (!end);
         }
@@ -243,7 +245,7 @@ class OsuBuffer {
      */
     ReadOsuString() {
         let isString = this.ReadByte() === 11;
-        if(isString) {
+        if (isString) {
             let len = this.ReadVarint();
             return this.ReadString(len);
         } else {
@@ -270,8 +272,16 @@ class OsuBuffer {
      * @return {OsuBuffer}
      */
     WriteUInt(value, byteLength) {
-        let buff = Buffer.alloc(byteLength);
-        buff.writeUIntLE(value, 0, byteLength);
+        let buff;
+        if (byteLength > 6) {
+            buff = new Uint64LE(value, 0, byteLength).toBuffer();
+
+        } else {
+            buff = Buffer.alloc(byteLength);
+
+            buff.writeUIntLE(value, 0, byteLength);
+        }
+
 
         return this.WriteBuffer(buff);
     }
@@ -284,7 +294,11 @@ class OsuBuffer {
      */
     WriteInt(value, byteLength) {
         let buff = Buffer.alloc(byteLength);
-        buff.writeIntLE(value, 0, byteLength);
+        if (byteLength > 6) {
+            buff = Buffer.from(new Int64LE(value).toBuffer(), 0, byteLength);
+        } else {
+            buff.writeIntLE(value, 0, byteLength);
+        }
 
         return this.WriteBuffer(buff);
     }
@@ -409,7 +423,7 @@ class OsuBuffer {
      * @return {OsuBuffer}
      */
     WriteString(value) {
-        let buff = Buffer.alloc(value.length);
+        let buff = Buffer.alloc(Buffer.from(value).length);
         buff.write(value);
 
         return this.WriteBuffer(buff);
@@ -431,16 +445,14 @@ class OsuBuffer {
      * @return {OsuBuffer}
      */
     WriteOsuString(value, nullable = false) {
-        if(value.length === 0 && nullable)
-        {
+        if (value.length === 0 && nullable) {
             this.WriteByte(0);
-        } else if(value.length === 0)
-        {
+        } else if (value.length === 0) {
             this.WriteByte(11);
             this.WriteByte(0);
         } else {
             this.WriteByte(11);
-            this.WriteVarint(value.length);
+            this.WriteVarint(Buffer.from(value).length);
             this.WriteString(value);
         }
         return this;
