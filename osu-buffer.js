@@ -157,7 +157,7 @@ class OsuBuffer {
      * @return {Number}
      */
     ReadInt64() {
-        return this.ReadInt(8);
+        return (this.ReadInt(4) << 8) + this.ReadInt(4);
     }
 
     /**
@@ -165,7 +165,7 @@ class OsuBuffer {
      * @return {Number}
      */
     ReadUInt64() {
-        return this.ReadUInt(8);
+        return (this.ReadUInt(4) << 8) + this.ReadUInt(4);
     }
 
     /**
@@ -367,7 +367,13 @@ class OsuBuffer {
      * @return {OsuBuffer}
      */
     WriteUInt64(value) {
-        return this.WriteUInt(value, 8);
+        let buff = Buffer.alloc(8);
+        // High
+        buff.writeUInt32LE(value >> 8, 0);
+        // Low
+        buff.writeUInt32LE(value & 0x00ff, 4);
+
+        return this.WriteBuffer(buff);
     }
 
     /**
@@ -376,7 +382,13 @@ class OsuBuffer {
      * @return {OsuBuffer}
      */
     WriteInt64(value) {
-        return this.WriteInt(value, 8);
+        let buff = Buffer.alloc(8);
+        // High
+        buff.writeInt32LE(value >> 8, 0);
+        // Low
+        buff.writeInt32LE(value & 0x00ff, 4);
+
+        return this.WriteBuffer(buff);
     }
 
     /**
