@@ -452,7 +452,7 @@ class OsuBuffer {
             this.WriteByte(0);
         } else {
             this.WriteByte(11);
-            this.WriteVarint(value.length);
+            this.WriteVarint(Buffer.byteLength(value, 'utf8'));
             this.WriteString(value);
         }
         return this;
