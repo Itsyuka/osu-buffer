@@ -421,7 +421,7 @@ class OsuBuffer {
      * @return {OsuBuffer}
      */
     WriteString(value) {
-        let buff = Buffer.alloc(value.length);
+        let buff = Buffer.alloc(Buffer.byteLength(value, 'utf8'));
         buff.write(value);
 
         return this.WriteBuffer(buff);
