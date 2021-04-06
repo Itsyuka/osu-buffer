@@ -368,10 +368,7 @@ class OsuBuffer {
      */
     WriteUInt64(value) {
         let buff = Buffer.alloc(8);
-        // High
-        buff.writeUInt32LE(value >> 8, 0);
-        // Low
-        buff.writeUInt32LE(value & 0x00ff, 4);
+        buff.writeBigUInt64LE(BigInt(value), 0);
 
         return this.WriteBuffer(buff);
     }
@@ -383,10 +380,7 @@ class OsuBuffer {
      */
     WriteInt64(value) {
         let buff = Buffer.alloc(8);
-        // High
-        buff.writeInt32LE(value >> 8, 0);
-        // Low
-        buff.writeInt32LE(value & 0x00ff, 4);
+        buff.writeBigInt64LE(BigInt(value), 0);
 
         return this.WriteBuffer(buff);
     }
