@@ -138,7 +138,9 @@ export class OsuWriter extends BaseBuffer {
   public writeInt32DoublePair(values: Map<number, number>): OsuWriter {
     this.writeInt32(values.size);
     for (const [k, v] of values.entries()) {
+      this.writeUint8(8);
       this.writeInt32(k);
+      this.writeUint8(13);
       this.writeDouble(v);
     }
     return this;

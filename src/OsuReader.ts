@@ -133,9 +133,13 @@ export class OsuReader extends BaseBuffer {
 
   public readInt32DoublePair(): Map<number, number> {
     const length = this.readInt32();
-    let map = new Map<number, number>();
+    const map = new Map<number, number>();
     for (let i = 0; i < length; i++) {
-      map.set(this.readInt32(), this.readDouble());
+      this.readUint8();
+      const key = this.readInt32();
+      this.readUint8();
+      const value = this.readInt32();
+      map.set(key, value);
     }
     return map;
   }

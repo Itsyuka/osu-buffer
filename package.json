@@ -1,6 +1,6 @@
 {
   "name": "osu-buffer",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Allows you to read and write packets/files for the game osu!",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
