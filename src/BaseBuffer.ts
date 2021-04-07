@@ -3,7 +3,7 @@ export class BaseBuffer {
   protected _position: number = 0;
   protected _length: number = 0;
 
-  constructor(data: ArrayBuffer) {
+  constructor(data?: ArrayBuffer) {
     if (data) {
       this._buff = data;
       this._length = data.byteLength;
